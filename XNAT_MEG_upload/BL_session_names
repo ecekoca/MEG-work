@@ -1,0 +1,7 @@
+order,Parent folder,CBU sequence name
+1,Audiovisual,av_task_BL_raw
+2,Roving_mismatch,mmn_BL_raw
+3,Scene_repetition,scenerep_BL_raw
+4,Visual_auditory_oddball,vao_task_BL_raw
+5,Resting_state_eyes_open,resting_open_BL_raw
+6,Resting_state_eyes_closed,resting_close_BL_raw
