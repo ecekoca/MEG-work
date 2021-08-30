@@ -2,7 +2,7 @@
 
 # Script to upload data from /megdata to xnat server using curl and XNAT REST API
 # v1.1 Russell Thompson 2019-04-09
-# modified by Ece K for MEG
+# modified by Ece K for MEG 2019
 
 
 function log_msg {
@@ -112,7 +112,6 @@ while IFS=$'\n' read cbuid;do
 	fi
 
 
-
 	# loop through scans listed in session info file
 	while IFS=$'\n' read sess_info;do
 
@@ -162,12 +161,7 @@ while IFS=$'\n' read cbuid;do
 			log_msg "${logfile}" "Directory ${xnat_url} already exists"
 		fi
 
-
-
-		
 		# If it doesn't already exist, create the resource directory in xnat:
-
-
 		curl_res=$(curl ${CURL_ARGS}${COOKIE} ${xnat_url}/resources/FIF)
 		if [ -z "$(echo "${curl_res}" | grep "HTTP/1.1 200 OK")" ];then
 			log_msg "${logfile}" "Creating directory ${xnat_url}/resources/FIF"
@@ -183,8 +177,6 @@ while IFS=$'\n' read cbuid;do
 		else
 			log_msg "${logfile}" "Directory ${xnat_url}/resources/FIF already exists"
 		fi
-
-
 
 
 		# Upload fif files
@@ -222,19 +214,8 @@ while IFS=$'\n' read cbuid;do
 					((exist_count++))				
 				fi
 			done
-
-			log_msg "${logfile}" "Uploaded ${upload_count} of ${nfiles} fif files. ${exist_count} files already present"
-		
+			log_msg "${logfile}" "Uploaded ${upload_count} of ${nfiles} fif files. ${exist_count} files already present"	
 		fi
-
-
 		log_msg "${logfile}" "------------"
-
-
 	done < <(tail -n +2 "${sessfile}" | sort -n -t ',' -k1)
-	
-
-
-
-
 done < <(tail -n +2 "${subjfile}" | awk -F',' '{print $5}')
