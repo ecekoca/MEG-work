@@ -35,7 +35,7 @@ do_tasks={
       'rest_closed'
     }; % List of task data you want to maxfilter
 
-session='AF'; %'AF''BL' ,  One at a time.
+session='AF'; %'AF', 'BL' One session at a time.
 
 % Processing options
 run_autobad = 1;
@@ -111,7 +111,7 @@ clear newlist k
 %% Begin
 %%=========================================================================
 
-basestr = ' -ctc /neuro/databases/ctc/ct_sparse.fif -cal /neuro/databases/sss/sss_cal.dat';
+basestr = ' -ctc /neuro/databases/ctc/ct_sparse.fif -cal /neuro/databases/sss/sss_cal.dat'; % set autobad settings
 basestr = [basestr ' -linefreq 50 -hpisubt amp'];
 basestr = [basestr ' -force'];
 maxfstr = '!/neuro/bin/util/x86_64-pc-linux-gnu/maxfilter-2.2.12 ';
@@ -136,7 +136,7 @@ for sub = 1:length(subjects)
         %rawsub_dir = fullfile(raw_dir,subjects{sub},date_dir);
         cd(ses_dir)
         if strcmp(do_tasks{ses},'vab')
-            raw_file=dir('*ta*raw*');
+            raw_file=dir('*ta*raw*'); % in case there's a typo in the filename EK
         else
             raw_file = dir('*raw*');
         end
@@ -191,7 +191,7 @@ for sub = 1:length(subjects)
         
         if run_autobad
             outfile = fullfile(ses_dir,'bad'); badfile = fullfile(ses_dir,'bad.txt'); logfile = fullfile(ses_dir,'bad.log');
-            badstr  = sprintf(' -autobad %d -badlimit %d',1800,7); % 1800s is 30mins - ie enough for all do_sessions?
+            badstr  = sprintf(' -autobad %d -badlimit %d',1800,7); % 1800s is 30mins - ie enough for all do_sessions EK
             
             if ~exist(logfile,'file') | OverWrite
                 filestr = sprintf(' -f %s -o %s.fif',[sub_dir '/' do_tasks{ses} '/' raw_file],outfile);
@@ -257,7 +257,6 @@ for sub = 1:length(subjects)
             transdeffile = fullfile(ses_dir,sprintf('transdef'));
                 if ~exist([transdeffile '.fif'],'file') | ~exist([transdeffile '.log'],'file') | OverWrite
                     outfile = 'tsss';
-                    %waitbar(0.99, h, ['Running trans default on Sub:' subjects{sub}(7:10) ' Task:' do_sessions{ses} '...']); %EK
                     transtr = [' -trans default -origin ' num2str(orig(1)+0) ' ' num2str(orig(2)-13) ' ' num2str(orig(3)+6) ' -frame head -force'];
                     filestr = sprintf(' -f %s.fif -o %s.fif',outfile,transdeffile);
                     finstr = [maxfstr filestr transtr sprintf(' -v | tee %s.log',transdeffile)]
@@ -265,7 +264,6 @@ for sub = 1:length(subjects)
                 end
                 
                 rik_eval(sprintf('!echo ''Transdef for %s'' >> %s',do_tasks{ses},movfile));
-                %fprintf(fp,'\nTransDef %s: ',do_sessions{ses});
                 rik_eval(sprintf('!cat %s.log | sed -n ''/Position change/p'' | cut -f 7- -d '' '' >> %s',transdeffile,movfile));
             % delete(h); %EK
             %fclose(fp);
